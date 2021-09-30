@@ -18,7 +18,9 @@ const config = {
 };
 
 function preload() {
-    this.load.image('player', 'scithersword.png');
+    this.load.setBaseURL('http://localhost:3000/');
+    
+    this.load.image('player', 'img/scithersword.png');
 
 }
 
