@@ -8,11 +8,9 @@ app.listen(port, () =>{
     console.log("Servidor Rodando na porta 3000")
 });
 
-app.get('/img/scithersword.png', (req, res)=> {
-    res.sendFile('scithersword.png', {root:path.join(__dirname, 'img')})
+app.use(express.static('public'));
 
-})
 
-app.get('/game', (req, res) => {
+app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname+'/index.html'))
 })
