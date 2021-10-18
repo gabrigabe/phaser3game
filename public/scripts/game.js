@@ -10,9 +10,11 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 5000 }
-        }
+            gravity: { y: 3000 }}
+        
+
     },
+
     scene:[MenuScene, PlayScene]
 
 };

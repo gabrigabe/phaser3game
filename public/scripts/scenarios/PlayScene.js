@@ -13,8 +13,8 @@ class PlayScene extends Phaser.Scene {
      create() {
         this.cameras.main.setViewport(0,0, 800, 600);
 
-        this.background = this.add.image(0, 0, 'bg').setOrigin(0, 0).setScale(1.5, 1.5);
-        this.background.scene.physics.world.setBounds(0,0, 1400, 600);
+        this.background = this.add.image(0, 0, 'bg').setOrigin(0, 0).setScale(1.0, 1.0);
+        this.background.scene.physics.world.setBounds(0,0, 800, 600);
 
 
         this.w = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
@@ -22,7 +22,7 @@ class PlayScene extends Phaser.Scene {
         this.s = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
         this.d = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
     
-        this.player = this.physics.add.image(50, 50, 'player').setScale(0.5, 0.5);
+        this.player = this.physics.add.image(100, 600, 'player').setScale(0.5, 0.5);
         this.player.setCollideWorldBounds(true);
         this.cameras.main.startFollow(this.player)
     }
@@ -31,7 +31,7 @@ class PlayScene extends Phaser.Scene {
         let cursors = this.input.keyboard.createCursorKeys();
         if ((cursors.left.isDown || this.a.isDown) || (cursors.right.isDown || this.d.isDown)) this.player.setVelocityX(cursors.left.isDown || this.a.isDown ? -160 : 160);
         else this.player.setVelocityX(0);
-        if ((cursors.up.isDown || this.w.isDown) || (cursors.down.isDown || this.s.isDown)) this.player.setVelocityY(cursors.up.isDown || this.w.isDown ? -160 : 160);
+        if ((cursors.up.isDown || this.w.isDown)) this.player.setVelocityY(cursors.up.isDown || this.w.isDown ? -100 : 100);
         else this.player.setVelocityY(0);
     }
     
