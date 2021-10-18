@@ -7,10 +7,16 @@ class PlayScene extends Phaser.Scene {
     preload() {
         
         this.load.image('player', 'img/scithersword.png');
-    
+        this.load.image('bg', 'gameassets/background.png')
     }
     
      create() {
+        this.cameras.main.setViewport(0,0, 800, 600);
+
+        this.background = this.add.image(0, 0, 'bg').setOrigin(0, 0).setScale(1.5, 1.5);
+        this.background.scene.physics.world.setBounds(0,0, 1400, 600);
+
+
         this.w = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
         this.a = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
         this.s = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S)
@@ -18,6 +24,7 @@ class PlayScene extends Phaser.Scene {
     
         this.player = this.physics.add.image(50, 50, 'player').setScale(0.5, 0.5);
         this.player.setCollideWorldBounds(true);
+        this.cameras.main.startFollow(this.player)
     }
     
      update() {
