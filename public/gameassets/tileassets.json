@@ -1,0 +1,15 @@
+{ "columns":62,
+ "image":"gametiles.png",
+ "imageheight":1000,
+ "imagewidth":1000,
+ "margin":0,
+ "name":"tileassets",
+ "spacing":0,
+ "tilecount":3844,
+ "tiledversion":"1.7.2",
+ "tileheight":16,
+ "tilewidth":16,
+ "transparentcolor":"#ff00ff",
+ "type":"tileset",
+ "version":"1.6"
+}

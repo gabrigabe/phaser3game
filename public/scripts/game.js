@@ -1,4 +1,3 @@
-
 import MenuScene from './scenarios/MenuScene.js';
 import LoadScene from './scenarios/LoadScene.js';
 import PlayScene from './scenarios/PlayScene.js';
@@ -8,12 +7,11 @@ const config = {
     width: 800,
     height: 600,
     autoCenter: true,
-    fps:30,
     physics: {
-        debug: true,
         default: 'arcade',
         arcade: {
-            gravity: { y: 300 }}
+            gravity: { 
+                y: 300 }},
         
 
     },
