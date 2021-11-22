@@ -1,7 +1,10 @@
 let coinLayer;
 let coins;
 let coinScore = 0;
+let tesourosEncontrados = 0;
 let text;
+let textObjetivo;
+let GameOver;
 
 
 class PlayScene extends Phaser.Scene {
@@ -62,8 +65,14 @@ class PlayScene extends Phaser.Scene {
                this. obj.body.height = object.height; 
         });
 
-        text = this.add.text(this.cameras.main.x, this.cameras.main.y,
+        text = this.add.text(this.cameras.main.x , this.cameras.main.y,
             `Moedas: ${coinScore}`, {
+            fontSize: '20px',
+            fill: '#ffffff'
+          });
+
+        textObjetivo = this.add.text(this.cameras.main.x, this.cameras.main.y,
+            `Tesouros: ${tesourosEncontrados}/3`, {
             fontSize: '20px',
             fill: '#ffffff'
           });
@@ -89,8 +98,6 @@ class PlayScene extends Phaser.Scene {
 
 
 
-
-
     }
     
      update() {
@@ -100,6 +107,8 @@ class PlayScene extends Phaser.Scene {
 
         text.y = this.cameras.main.scrollY + 150
         text.x = this.player.x  + 100
+        textObjetivo.y = this.cameras.main.scrollY + 180
+        textObjetivo.x = this.player.x  + 60
 
     
         if(!Phaser.Geom.Rectangle.Overlaps(this.physics.world.bounds, this.player.getBounds())){
