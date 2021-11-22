@@ -7,7 +7,6 @@ class MenuScene extends Phaser.Scene {
 
 
     preload() {
-    this.load.image('menubackground', 'gameassets/background.png');
     this.load.image('logo', 'gameassets/logo.png');
     this.load.image('play', 'gameassets/playbutton.png');
 }

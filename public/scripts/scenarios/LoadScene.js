@@ -7,13 +7,15 @@ class LoadScene extends Phaser.Scene{
         this.load.spritesheet('player', 'gameassets/herochar_spritesheet.png', {frameWidth:15.8, frameHeight:16});
         this.load.image('tileset2', 'gameassets/tileset.png');
         this.coins = this.load.spritesheet("coins", "gameassets/coins.png", {frameWidth:16, frameHeight:16});
-        this.load.audio('pulo', "gameassets/Jump.wav");
-        this.load.audio('coin', "gameassets/CoinPick.wav");
-        this.load.audio('morte', "gameassets/Death.wav");
     }
 
     create() {
 
+        this.anims.create({
+            key: 'death',
+            frames: this.anims.generateFrameNumbers('player',{start: 64, end : 66}),
+            frameRate: 5,
+        });
 
         this.anims.create({
             key: 'girar',
@@ -39,12 +41,6 @@ class LoadScene extends Phaser.Scene{
             key: 'parado',
             frames: this.anims.generateFrameNumbers('player', { start: 40, end: 43 }),
             frameRate: 3
-        });
-
-        this.anims.create({
-            key: 'death',
-            frames: this.anims.generateFrameNumbers('player',{start:72, end: 74}),
-            frameRate: 10
         });
 
 
