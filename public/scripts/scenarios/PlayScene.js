@@ -1,3 +1,9 @@
+let coinLayer;
+let coins;
+let coinScore = 0;
+let text;
+
+
 class PlayScene extends Phaser.Scene {
     constructor(){
         super('PlayScene');
@@ -10,14 +16,13 @@ class PlayScene extends Phaser.Scene {
             sceneKey:'animatedTiles',
             systemKey:'animatedTiles'
         });
+
+
+        this.canvas = this.sys.game.canvas;
      }
 
 
      create() {
-        let coinLayer;
-        let coins;
-        let coinScore = 1;
-        let text;
         this.sfxCoin = this.sound.add('coin')
         this.sfxDeath = this.sound.add('morte')
         this.sfxJump = this.sound.add('pulo')
@@ -33,8 +38,8 @@ class PlayScene extends Phaser.Scene {
         fundo.setCollisionByProperty({solido: true})
         solidos.setCollisionByProperty({solido: true})
         this.cameras.main.setBounds(0,0,mapa.widthInPixels, mapa.heightInPixels)
-        this.physics.world.setBounds( 0, 0, mapa.widthInPixels, mapa.heightInPixels + 100);
-        this.cameras.main.setZoom(2.0)
+        this.physics.world.setBounds( 0, 0, mapa.widthInPixels, mapa.heightInPixels);
+        this.cameras.main.setZoom(1.8)
         this.w = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
         this.a = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
         this.d = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
@@ -45,7 +50,8 @@ class PlayScene extends Phaser.Scene {
         this.physics.add.collider(this.player, deadlys, hitDeadly, null, this);
         this.physics.add.overlap(this.player, coins, collectCoin, null, this);
 
-        this.cameras.main.startFollow(this.player)
+        this.teste = this.cameras.main.startFollow(this.player)
+
 
         coinLayer.forEach(object => {
             this.obj = coins.create(object.x, object.y, 'coins');
@@ -56,21 +62,31 @@ class PlayScene extends Phaser.Scene {
                this. obj.body.height = object.height; 
         });
 
+        text = this.add.text(this.cameras.main.x, this.cameras.main.y,
+            `Moedas: ${coinScore}`, {
+            fontSize: '20px',
+            fill: '#ffffff'
+          });
+
         function collectCoin(player, coin) {
             this.sfxCoin.play();
             coin.destroy(coin.x, coin.y); 
-            coinScore = coinScore ++; 
+            coinScore = coinScore + 1; 
+            text.setText(`Moedas: ${coinScore}`)
             return false;
         }
+
 
 
         function hitDeadly (player, deadlys)
         {
             this.sfxDeath.play()
+            coinScore = 0;
             player.anims.play('death')
             player.body.enable = false
             this.scene.start('MenuScene');
         }
+
 
 
 
@@ -82,11 +98,13 @@ class PlayScene extends Phaser.Scene {
         this.player.body.setVelocityX(0);
         this.sfxJump = this.sound.add('pulo')
 
-    
+        text.y = this.cameras.main.scrollY + 150
+        text.x = this.player.x  + 100
 
-        
+    
         if(!Phaser.Geom.Rectangle.Overlaps(this.physics.world.bounds, this.player.getBounds())){
             this.sfxDeath.play()
+            coinScore = 0
             this.gameOver = true;
             this.player.body.enable = false
             this.scene.start('MenuScene')
