@@ -18,6 +18,9 @@ class PlayScene extends Phaser.Scene {
         let coins;
         let coinScore = 1;
         let text;
+        this.sfxCoin = this.sound.add('coin')
+        this.sfxDeath = this.sound.add('morte')
+        this.sfxJump = this.sound.add('pulo')
         const mapa = this.add.tilemap('mapa');
         const tileset = mapa.addTilesetImage('tileset', 'tileset2');
         const fundo = mapa.createLayer('fundo', tileset, 0,0);
@@ -54,6 +57,7 @@ class PlayScene extends Phaser.Scene {
         });
 
         function collectCoin(player, coin) {
+            this.sfxCoin.play();
             coin.destroy(coin.x, coin.y); 
             coinScore = coinScore ++; 
             return false;
@@ -62,7 +66,8 @@ class PlayScene extends Phaser.Scene {
 
         function hitDeadly (player, deadlys)
         {
-    
+            this.sfxDeath.play()
+            player.anims.play('death')
             player.body.enable = false
             this.scene.start('MenuScene');
         }
@@ -75,11 +80,13 @@ class PlayScene extends Phaser.Scene {
      update() {
         this.physics.world.setFPS(30);
         this.player.body.setVelocityX(0);
+        this.sfxJump = this.sound.add('pulo')
 
     
 
         
         if(!Phaser.Geom.Rectangle.Overlaps(this.physics.world.bounds, this.player.getBounds())){
+            this.sfxDeath.play()
             this.gameOver = true;
             this.player.body.enable = false
             this.scene.start('MenuScene')
@@ -96,6 +103,7 @@ class PlayScene extends Phaser.Scene {
         }
         if(this.w.isDown && this.player.body.onFloor()){
             this.player.body.setVelocityY(-250)
+            this.sfxJump.play();
         }
 
         if((this.a.isDown || this.d.isDown) && this.player.body.onFloor()){
@@ -111,12 +119,6 @@ class PlayScene extends Phaser.Scene {
         }
         
 
-
-      /*  let cursors = this.input.keyboard.createCursorKeys();
-        if ((cursors.left.isDown || this.a.isDown) || (cursors.right.isDown || this.d.isDown)) this.player.setVelocityX(cursors.left.isDown || this.a.isDown ? -160 : 160);
-        else this.player.setVelocityX(0);
-        if ((cursors.up.isDown || this.w.isDown)) this.player.setVelocityY(cursors.up.isDown || this.w.isDown ? -100 : 100);
-        else this.player.setVelocityY(0);*/
     }
     
 
