@@ -1,9 +1,13 @@
 let coinLayer;
+let tesourosLayer;
 let coins;
+let tesouros;
+let vidas = 3;
 let coinScore = 0;
 let tesourosEncontrados = 0;
 let text;
 let textObjetivo;
+let textVidas;
 let GameOver;
 let playerDyng = 0;
 
@@ -12,7 +16,9 @@ class PlayScene extends Phaser.Scene {
         super('PlayScene');
     }
      preload(){
+        this.gameOver = false;
         playerDyng = 0
+        coinScore = 0
         this.load.tilemapTiledJSON('mapa', 'gameassets/newmap.json')
         this.load.scenePlugin({
             key:'AnimatedTiles',
@@ -22,9 +28,8 @@ class PlayScene extends Phaser.Scene {
         });
         this.load.audio('pulo', "gameassets/Jump.wav");
         this.load.audio('coin', "gameassets/CoinPick.wav");
-        this.load.audio('morte', "gameassets/Death.wav", {
-            repeat: 0
-        });
+        this.load.audio('morte', "gameassets/Death.wav");
+        this.load.audio('hitted', "gameassets/hitted.wav");
 
 
         this.canvas = this.sys.game.canvas;
@@ -32,19 +37,20 @@ class PlayScene extends Phaser.Scene {
 
 
      create() {
-        this.sfxCoin = this.sound.add('coin',{
-            
-         volume: 0.5
-        })
+        vidas = 3
+        this.sfxCoin = this.sound.add('coin')
         this.sfxDeath = this.sound.add('morte')
-       this.sfxJump = this.sound.add('pulo')
+        this.sfxJump = this.sound.add('pulo')
+        this.sfxHit = this.sound.add('hitted')
         const mapa = this.add.tilemap('mapa');
         const tileset = mapa.addTilesetImage('tileset', 'tileset2');
         const fundo = mapa.createLayer('fundo', tileset, 0,0);
         const solidos = mapa.createLayer('terrain', tileset, 0, 0);
         const deadlys = mapa.createLayer('machuca', tileset, 0, 0);
         coinLayer = mapa.getObjectLayer('moedas')['objects'];
-        coins = this.physics.add.staticGroup()
+        tesourosLayer = mapa.getObjectLayer('tesouro')['objects'];
+        coins = this.physics.add.staticGroup();
+        tesouros = this.physics.add.staticGroup();
         this.sys.animatedTiles.init(mapa);
         deadlys.setCollisionByProperty({deadly: true})
         fundo.setCollisionByProperty({solido: true})
@@ -74,8 +80,22 @@ class PlayScene extends Phaser.Scene {
                this. obj.body.height = object.height; 
         });
 
+        tesourosLayer.forEach(object => {
+            this.tesouro = tesouros.create(object.x, object.y, 'tesouro');
+              this.tesouro.setScale(object.width/32, object.height/32); 
+               this.tesouro.setOrigin(0); 
+               this.tesouro.body.width = object.width; 
+               this. tesouro.body.height = object.height; 
+        });
+
         text = this.add.text(this.cameras.main.x , this.cameras.main.y,
             `Moedas: ${coinScore}`, {
+            fontSize: '20px',
+            fill: '#ffffff'
+          });
+
+        textVidas = this.add.text(this.cameras.main.x , this.cameras.main.y,
+            `Vidas: ${vidas}  `, {
             fontSize: '20px',
             fill: '#ffffff'
           });
@@ -100,26 +120,45 @@ class PlayScene extends Phaser.Scene {
         {   
             let x = player.x - 120;
             let y = player.y - 100;
-           player.anims.play('death', true)
+
+           vidas = vidas - 1;
            playerDyng = 1;
-           player.disableBody();
+           textVidas.setText(`Vidas: ${vidas}`)
+
+           if(vidas >= 0 && vidas < 3){
+            player.anims.play('hit', true)
+            player.once('animationcomplete', () => {
+                playerDyng = 0
+
+            })
+            player.x = player.x - 50
+            this.sfxHit.play();
+           }
+
+           if(vidas === -1){
+            textVidas.setText(`Vidas: 0`)
+            player.anims.play('death', true)
+            playerDyng = 1;
+            player.disableBody();
+            this.gameOver= true;
+
+            player.once('animationcomplete', () => {
+                this.sfxDeath.play();
+                this.add.text(x, y,
+                    `GAME OVER`, {
+                    fontSize: '50px',
+                    fill: '#black'
+                  })
+                  this.add.text(x - 5, y + 50,
+                    `Clique aqui para voltar ao menu`, {
+                    fontSize: '15px',
+                    fill: '#black'
+                  }).setInteractive( {useHandCursor: true}).on('pointerdown', () => this.scene.start('MenuScene'))
+        
+              })
+           }
 
         
-           player.once('animationcomplete', () => {
-            coinScore = 0;
-            this.sfxDeath.play();
-            this.add.text(x, y,
-                `GAME OVER`, {
-                fontSize: '50px',
-                fill: '#black'
-              })
-              this.add.text(x - 5, y + 50,
-                `Clique aqui para voltar ao menu`, {
-                fontSize: '15px',
-                fill: '#black'
-              }).setInteractive( {useHandCursor: true}).on('pointerdown', () => this.scene.start('MenuScene'))
-    
-          })
 
         }
 
@@ -133,12 +172,40 @@ class PlayScene extends Phaser.Scene {
         text.x = this.player.x  + 100
         textObjetivo.y = this.cameras.main.scrollY + 180
         textObjetivo.x = this.player.x  + 60
+
+        textVidas.y = this.cameras.main.scrollY + 200
+        textVidas.x = this.player.x  + 120
     
         if(!Phaser.Geom.Rectangle.Overlaps(this.physics.world.bounds, this.player.getBounds())){
-            this.sfxDeath.play();
-            this.scene.start('MenuScene');
+            let x = this.player.x - 120;
+            let y = this.player.y - 100;
+            playerDyng = 1;
+            vidas = vidas - 1;
+ 
+            if(vidas >= 0 && vidas < 3){
+            playerDyng = 0
+            this.player.anims.play('hit', true)
+                textVidas.setText(`Vidas: ${vidas}`)
+             this.player.y =  this.player.y - 200
+             this.player.x =  this.player.x - 50
+             this.sfxHit.play();
+             this.sfxHit.play();
+            }
+            else if(vidas  === -1){
+                textVidas.setText(`Vidas: 0`)
+                this.sfxDeath.play();
+                this.add.text(x+50, y- 125,
+                    `GAME OVER`, {
+                    fontSize: '50px',
+                    fill: '#black'
+                  })
+                this.add.text(x + 50, y - 75,
+                    `Clique aqui para voltar ao menu`, {
+                    fontSize: '15px',
+                    fill: '#black'
+                  }).setInteractive( {useHandCursor: true}).on('pointerdown', () => this.scene.start('MenuScene'))
 
-            coinScore = 0
+            }
         }
 
         if(!this.gameOver){

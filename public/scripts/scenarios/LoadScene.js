@@ -7,6 +7,7 @@ class LoadScene extends Phaser.Scene{
         this.load.spritesheet('player', 'gameassets/herochar_spritesheet.png', {frameWidth:15.8, frameHeight:16});
         this.load.image('tileset2', 'gameassets/tileset.png');
         this.coins = this.load.spritesheet("coins", "gameassets/coins.png", {frameWidth:16, frameHeight:16});
+        this.tesouros = this.load.spritesheet("tesouro", "gameassets/spritesheet.png", {frameWidth:30, frameHeight:23, startFrame: 3});
     }
 
     create() {
@@ -15,6 +16,18 @@ class LoadScene extends Phaser.Scene{
             key: 'death',
             frames: this.anims.generateFrameNumbers('player',{start: 64, end : 66}),
             frameRate: 5,
+        });
+
+        this.anims.create({
+            key: 'hit',
+            frames: this.anims.generateFrameNumbers('player',{start: 64, end : 66}),
+            frameRate: 5,
+        });
+
+        this.anims.create({
+            key: 'abrir',
+            frames: this.anims.generateFrameNumbers('tesouro',{start: 0, end : 3}),
+            frameRate: 1,
         });
 
         this.anims.create({

@@ -40,6 +40,39 @@
         }, 
         {
          "draworder":"topdown",
+         "id":6,
+         "name":"tesouro",
+         "objects":[
+                {
+                 "height":29.3333333333333,
+                 "id":39,
+                 "name":"tesouro",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":40,
+                 "x":2298.66666666667,
+                 "y":240
+                }, 
+                {
+                 "height":32,
+                 "id":42,
+                 "name":"tesouro",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":334,
+                 "y":268.000016666667
+                }],
+         "opacity":1,
+         "type":"objectgroup",
+         "visible":true,
+         "x":0,
+         "y":0
+        }, 
+        {
+         "draworder":"topdown",
          "id":5,
          "name":"moedas",
          "objects":[
@@ -291,8 +324,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":6,
- "nextobjectid":39,
+ "nextlayerid":7,
+ "nextobjectid":43,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.7.2",
