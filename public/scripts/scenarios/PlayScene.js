@@ -135,7 +135,11 @@ class PlayScene extends Phaser.Scene {
                 playerDyng = 0
 
             })
-            player.x = player.x - 50
+            if(player.body.velocity.x < 0){
+                player.x = player.x + 100
+            }else{
+                player.x = player.x - 100
+            }
             this.sfxHit.play();
            }
 
@@ -179,6 +183,8 @@ class PlayScene extends Phaser.Scene {
 
         textVidas.y = this.cameras.main.scrollY + 200
         textVidas.x = this.player.x  + 120
+
+        console.log(this.player.body.velocity.x)
     
         if(!Phaser.Geom.Rectangle.Overlaps(this.physics.world.bounds, this.player.getBounds())){
             let x = this.player.x - 120;
@@ -190,9 +196,16 @@ class PlayScene extends Phaser.Scene {
             playerDyng = 0
             this.player.anims.play('hit', true)
                 textVidas.setText(`Vidas: ${vidas}`)
-             this.player.y =  this.player.y - 200
-             this.player.x =  this.player.x - 50
-             this.sfxHit.play();
+             if(this.player.body.velocity.x < 0){
+                this.player.y =  this.player.y - 200
+                this.player.x =  this.player.x + 100
+
+             }else{
+                this.player.y =  this.player.y - 200
+                this.player.x =  this.player.x - 50
+
+             }
+
              this.sfxHit.play();
             }
             else if(vidas  === -1){
