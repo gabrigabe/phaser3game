@@ -19,6 +19,7 @@ class PlayScene extends Phaser.Scene {
         this.gameOver = false;
         playerDyng = 0
         coinScore = 0
+        tesourosEncontrados = 0;
         this.load.tilemapTiledJSON('mapa', 'gameassets/newmap.json')
         this.load.scenePlugin({
             key:'AnimatedTiles',
@@ -26,13 +27,6 @@ class PlayScene extends Phaser.Scene {
             sceneKey:'animatedTiles',
             systemKey:'animatedTiles'
         });
-        this.load.audio('pulo', "gameassets/Jump.wav");
-        this.load.audio('coin', "gameassets/CoinPick.wav");
-        this.load.audio('morte', "gameassets/Death.wav");
-        this.load.audio('hitted', "gameassets/hitted.wav");
-
-
-        this.canvas = this.sys.game.canvas;
      }
 
 
@@ -42,6 +36,7 @@ class PlayScene extends Phaser.Scene {
         this.sfxDeath = this.sound.add('morte')
         this.sfxJump = this.sound.add('pulo')
         this.sfxHit = this.sound.add('hitted')
+        this.sfxTreasure = this.sound.add('treasure')
         const mapa = this.add.tilemap('mapa');
         const tileset = mapa.addTilesetImage('tileset', 'tileset2');
         const fundo = mapa.createLayer('fundo', tileset, 0,0);
@@ -67,6 +62,7 @@ class PlayScene extends Phaser.Scene {
         this.physics.add.collider(this.player, fundo)
         this.physics.add.collider(this.player, deadlys, hitDeadly, null, this);
         this.physics.add.overlap(this.player, coins, collectCoin, null, this);
+        this.physics.add.overlap(this.player, tesouros, collectTreasure, null, this);
 
         this.teste = this.cameras.main.startFollow(this.player)
 
@@ -86,6 +82,7 @@ class PlayScene extends Phaser.Scene {
                this.tesouro.setOrigin(0); 
                this.tesouro.body.width = object.width; 
                this. tesouro.body.height = object.height; 
+
         });
 
         text = this.add.text(this.cameras.main.x , this.cameras.main.y,
@@ -111,7 +108,14 @@ class PlayScene extends Phaser.Scene {
             coin.destroy(coin.x, coin.y); 
             coinScore = coinScore + 1; 
             text.setText(`Moedas: ${coinScore}`)
-            return false;
+        }
+
+        function collectTreasure(player, tesouros) {
+            this.sfxTreasure.play();
+            tesouros.destroy(tesouros.x, tesouros.y); 
+            tesourosEncontrados = tesourosEncontrados + 1; 
+            textObjetivo.setText(`Tesouros: ${tesourosEncontrados}/3`)
+
         }
 
 
