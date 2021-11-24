@@ -1,5 +1,3 @@
-
-
 let coinLayer;
 let tesourosLayer;
 let coins;
@@ -98,6 +96,11 @@ class PlayScene extends Phaser.Scene {
             tesourosEncontrados = tesourosEncontrados + 1; 
             this.events.emit('addTreasure')
 
+            if(tesourosEncontrados === 3 ){
+                this.events.emit('GameOver');
+                this.scene.start('SucessScene');
+            }
+
         }
 
 
@@ -117,9 +120,9 @@ class PlayScene extends Phaser.Scene {
                 playerDyng = 0
 
             })
-            if(player.body.velocity.x < 0){
+            if(player.flipX){
                 player.x = player.x + 100
-            }else{
+            }else if(!player.flipX){
                 player.x = player.x - 100
             }
             this.sfxHit.play();
@@ -133,26 +136,12 @@ class PlayScene extends Phaser.Scene {
 
             player.once('animationcomplete', () => {
                 this.events.emit('GameOver');
-                this.sfxDeath.play();
-                this.add.text(x, y,
-                    `GAME OVER`, {
-                    fontSize: '50px',
-                    fill: '#black'
-                  })
-                  this.add.text(x - 5, y + 50,
-                    `Clique aqui para voltar ao menu`, {
-                    fontSize: '15px',
-                    fill: '#black'
-                  }).setInteractive( {useHandCursor: true}).on('pointerdown', () => this.scene.start('MenuScene'))
+                this.scene.start('GameOverScene')
+
         
               })
            }
-
-        
-
         }
-
-
 
     }
     
@@ -169,12 +158,12 @@ class PlayScene extends Phaser.Scene {
             playerDyng = 0
             this.player.anims.play('hit', true)
             this.events.emit('removeLife')
-             if(this.player.body.velocity.x < 0){
-                this.player.y =  this.player.y - 200
+             if(this.player.flipX){
+                this.player.y =  this.player.y - 150
                 this.player.x =  this.player.x + 100
 
-             }else{
-                this.player.y =  this.player.y - 200
+             }else if(!this.player.flipX){
+                this.player.y =  this.player.y - 150
                 this.player.x =  this.player.x - 100
 
              }
@@ -183,17 +172,7 @@ class PlayScene extends Phaser.Scene {
             }
             else if(vidas  === -1){
                 this.events.emit('GameOver');
-                this.sfxDeath.play();
-                this.add.text(x+50, y- 125,
-                    `GAME OVER`, {
-                    fontSize: '50px',
-                    fill: '#black'
-                  })
-                this.add.text(x + 50, y - 75,
-                    `Clique aqui para voltar ao menu`, {
-                    fontSize: '15px',
-                    fill: '#black'
-                  }).setInteractive( {useHandCursor: true}).on('pointerdown', () => this.scene.start('MenuScene'))
+                this.scene.start('GameOverScene')
 
             }
         }
@@ -227,8 +206,6 @@ class PlayScene extends Phaser.Scene {
         }
 
 
-        
-        
 
     }
     

@@ -2,6 +2,9 @@ import MenuScene from './scenarios/MenuScene.js';
 import LoadScene from './scenarios/LoadScene.js';
 import PlayScene from './scenarios/PlayScene.js';
 import UIScene from './scenarios/UiScene.js';
+import HelpScene from './scenarios/HelpScene.js';
+import GameOverScene from './scenarios/GameOverScene.js';
+import SucessScene from './scenarios/SucessScene.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -21,7 +24,6 @@ const config = {
     },
 
     scene:[MenuScene,LoadScene, PlayScene]
-
 };
 
 
@@ -31,3 +33,6 @@ game.scene.add('MenuScene');
 game.scene.add('LoadScene');
 game.scene.add('PlayScene');
 game.scene.add('UIScene', UIScene, false)
+game.scene.add('GameOverScene', GameOverScene);
+game.scene.add('HelpScene', HelpScene);
+game.scene.add('SucessScene', SucessScene);
