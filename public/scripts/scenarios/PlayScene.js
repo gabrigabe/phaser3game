@@ -1,15 +1,13 @@
+
+
 let coinLayer;
 let tesourosLayer;
 let coins;
 let tesouros;
 let vidas = 3;
-let coinScore = 0;
 let tesourosEncontrados = 0;
-let text;
-let textObjetivo;
-let textVidas;
-let GameOver;
 let playerDyng = 0;
+
 
 class PlayScene extends Phaser.Scene {
     constructor(){
@@ -18,7 +16,6 @@ class PlayScene extends Phaser.Scene {
      preload(){
         this.gameOver = false;
         playerDyng = 0
-        coinScore = 0
         tesourosEncontrados = 0;
         this.load.tilemapTiledJSON('mapa', 'gameassets/newmap.json')
         this.load.scenePlugin({
@@ -27,11 +24,14 @@ class PlayScene extends Phaser.Scene {
             sceneKey:'animatedTiles',
             systemKey:'animatedTiles'
         });
+
      }
 
 
      create() {
         vidas = 3
+        this.scene.run('UIScene');
+        this.events.emit('GameStart');
         this.sfxCoin = this.sound.add('coin')
         this.sfxDeath = this.sound.add('morte')
         this.sfxJump = this.sound.add('pulo')
@@ -52,7 +52,7 @@ class PlayScene extends Phaser.Scene {
         solidos.setCollisionByProperty({solido: true})
         this.cameras.main.setBounds(0,0,mapa.widthInPixels, mapa.heightInPixels)
         this.physics.world.setBounds( 0, 0, mapa.widthInPixels, mapa.heightInPixels);
-        this.cameras.main.setZoom(1.8)
+        this.cameras.main.setZoom(2)
         this.w = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W)
         this.a = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A)
         this.d = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D)
@@ -85,36 +85,18 @@ class PlayScene extends Phaser.Scene {
 
         });
 
-        text = this.add.text(this.cameras.main.x , this.cameras.main.y,
-            `Moedas: ${coinScore}`, {
-            fontSize: '20px',
-            fill: '#ffffff'
-          });
-
-        textVidas = this.add.text(this.cameras.main.x , this.cameras.main.y,
-            `Vidas: ${vidas}  `, {
-            fontSize: '20px',
-            fill: '#ffffff'
-          });
-
-        textObjetivo = this.add.text(this.cameras.main.x, this.cameras.main.y,
-            `Tesouros: ${tesourosEncontrados}/3`, {
-            fontSize: '20px',
-            fill: '#ffffff'
-          });
 
         function collectCoin(player, coin) {
             this.sfxCoin.play();
             coin.destroy(coin.x, coin.y); 
-            coinScore = coinScore + 1; 
-            text.setText(`Moedas: ${coinScore}`)
+            this.events.emit('addCoins')
         }
 
         function collectTreasure(player, tesouros) {
             this.sfxTreasure.play();
             tesouros.destroy(tesouros.x, tesouros.y); 
             tesourosEncontrados = tesourosEncontrados + 1; 
-            textObjetivo.setText(`Tesouros: ${tesourosEncontrados}/3`)
+            this.events.emit('addTreasure')
 
         }
 
@@ -127,7 +109,7 @@ class PlayScene extends Phaser.Scene {
 
            vidas = vidas - 1;
            playerDyng = 1;
-           textVidas.setText(`Vidas: ${vidas}`)
+           this.events.emit('removeLife')
 
            if(vidas >= 0 && vidas < 3){
             player.anims.play('hit', true)
@@ -144,13 +126,13 @@ class PlayScene extends Phaser.Scene {
            }
 
            if(vidas === -1){
-            textVidas.setText(`Vidas: 0`)
             player.anims.play('death', true)
             playerDyng = 1;
             player.disableBody();
             this.gameOver= true;
 
             player.once('animationcomplete', () => {
+                this.events.emit('GameOver');
                 this.sfxDeath.play();
                 this.add.text(x, y,
                     `GAME OVER`, {
@@ -176,15 +158,6 @@ class PlayScene extends Phaser.Scene {
     
      update() {
 
-        text.y = this.cameras.main.scrollY + 150
-        text.x = this.player.x  + 100
-        textObjetivo.y = this.cameras.main.scrollY + 180
-        textObjetivo.x = this.player.x  + 60
-
-        textVidas.y = this.cameras.main.scrollY + 200
-        textVidas.x = this.player.x  + 120
-
-        console.log(this.player.body.velocity.x)
     
         if(!Phaser.Geom.Rectangle.Overlaps(this.physics.world.bounds, this.player.getBounds())){
             let x = this.player.x - 120;
@@ -195,21 +168,21 @@ class PlayScene extends Phaser.Scene {
             if(vidas >= 0 && vidas < 3){
             playerDyng = 0
             this.player.anims.play('hit', true)
-                textVidas.setText(`Vidas: ${vidas}`)
+            this.events.emit('removeLife')
              if(this.player.body.velocity.x < 0){
                 this.player.y =  this.player.y - 200
                 this.player.x =  this.player.x + 100
 
              }else{
                 this.player.y =  this.player.y - 200
-                this.player.x =  this.player.x - 50
+                this.player.x =  this.player.x - 100
 
              }
 
              this.sfxHit.play();
             }
             else if(vidas  === -1){
-                textVidas.setText(`Vidas: 0`)
+                this.events.emit('GameOver');
                 this.sfxDeath.play();
                 this.add.text(x+50, y- 125,
                     `GAME OVER`, {
@@ -226,14 +199,13 @@ class PlayScene extends Phaser.Scene {
         }
 
         if(!this.gameOver){
-            this.physics.world.setFPS(30);
             this.player.body.setVelocityX(0);
             if(this.a.isDown ){
-                this.player.body.setVelocityX(-50)
+                this.player.body.setVelocityX(-45)
                 this.player.flipX = true
             }
             if(this.d.isDown){
-                this.player.body.setVelocityX(50)
+                this.player.body.setVelocityX(45)
                 this.player.flipX = false
             }
             if(this.w.isDown && this.player.body.onFloor()){

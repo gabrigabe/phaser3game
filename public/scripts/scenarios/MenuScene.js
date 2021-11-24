@@ -13,7 +13,7 @@ class MenuScene extends Phaser.Scene {
 
     create() {
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.add.image(0, 0, 'menubackground').setOrigin(0, 0).setScale(1.3);
+    this.cameras.main.setBackgroundColor('#FFFFFF')
     this.add.image(0, 0, 'logo').setOrigin(0, 0).setScale(1.0);
     this.add.image(0, 0, 'play').setOrigin(-0.15, -8).setScale(1.0).setInteractive( {useHandCursor: true}).on('pointerdown', () => this.scene.start('LoadScene'));
     }
