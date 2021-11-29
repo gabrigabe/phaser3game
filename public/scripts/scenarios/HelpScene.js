@@ -5,15 +5,16 @@ class HelpScene extends Phaser.Scene {
 
 
     preload() {
-    this.load.image('logo', 'gameassets/logo.png');
-    this.load.image('play', 'gameassets/playbutton.png');
+    this.load.image('bg', 'gameassets/bg.png');
+    this.load.image('ajuda', 'gameassets/textoajuda.png');
+    this.load.image('menu', 'gameassets/Voltarmenu.png');
 }
 
     create() {
     this.cursors = this.input.keyboard.createCursorKeys();
-    this.cameras.main.setBackgroundColor('#FFFFFF')
-    this.add.image(0, 0, 'logo').setOrigin(0, 0).setScale(1.0);
-    this.add.image(0, 0, 'play').setOrigin(-0.15, -8).setScale(1.0).setInteractive( {useHandCursor: true}).on('pointerdown', () => this.scene.start('MenuScene'));
+    this.add.image(0, 0, 'bg').setOrigin(0, 0).setScale(1.0);
+    this.add.image(0, 50, 'ajuda').setOrigin(0, 0).setScale(1.0);
+    this.add.image(40, 400, 'menu').setOrigin(0, 0).setScale(1.25).setInteractive( {useHandCursor: true}).on('pointerdown', () => this.scene.start('MenuScene'));
     }
 
 
